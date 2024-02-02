@@ -1,6 +1,3 @@
-const Phaser = require('phaser');
-const io = require('socket.io-client');
-
 // Create a socket instance
 const socket = io();
 
