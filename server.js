@@ -12,12 +12,12 @@ app.use(express.static(path.join(__dirname, 'client')));
 let connectedUsers = 0;
 
 io.on('connection', (socket) => {
-    console.log('A user connected');
+    console.log(`User ${socket.id} connected`);
     connectedUsers++;
     io.emit('updateConnectedUsers', connectedUsers);
 
     socket.on('disconnect', () => {
-        console.log('User disconnected');
+        console.log(`User ${socket.id} disconnected`);
         connectedUsers--;
         io.emit('updateConnectedUsers', connectedUsers);
     });
