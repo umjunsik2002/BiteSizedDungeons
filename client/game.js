@@ -1,5 +1,6 @@
-const Phaser = require('phaser');
-const io = require('socket.io-client');
+import Phaser from 'phaser';
+import io from 'socket.io-client';
+import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 
 // Create a socket instance
 const socket = io({ reconnection: true });
@@ -77,7 +78,6 @@ class Title extends Phaser.Scene {
     }
 
     preload() {
-
     }
 
     create() {
@@ -94,6 +94,12 @@ class Title extends Phaser.Scene {
                 fill: '#000000',
             }
         ).setOrigin(0.5, 0.5);
+
+        const textBox = this.rexUI.add.textBox({
+            width: 1000,
+            height: 1000,
+            text: this.add.text(800, 200, 'yippee!', {fontSize: '50px', fill: '#000000'}),
+        });
 
         this.updateConnectedUsersListener = (count) => {
             usersText.setText(`Connected Users: ${count}`);
@@ -112,9 +118,17 @@ class Title extends Phaser.Scene {
 
     }
 }
+const plugins = { scene: [
+    {
+        key: 'rexUI',
+        plugin: UIPlugin,
+        mapping: 'rexUI'
+    }
+]}
 
 const config = {
     type: Phaser.WEBGL,
+    plugins,
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
