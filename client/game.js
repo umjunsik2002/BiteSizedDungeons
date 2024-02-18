@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import io from 'socket.io-client';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
+import InputTextPlugin from 'phaser3-rex-plugins/plugins/inputtext-plugin.js';
+import TextEditPlugin from 'phaser3-rex-plugins/plugins/textedit-plugin.js';
 
 // Create a socket instance
 const socket = io({ reconnection: true });
@@ -95,11 +97,15 @@ class Title extends Phaser.Scene {
             }
         ).setOrigin(0.5, 0.5);
 
+        const myText = this.add.text(800, 200, 'yippee!', { fontSize: '50px', fill: '#000000' })
+
         const textBox = this.rexUI.add.textBox({
             width: 1000,
             height: 1000,
-            text: this.add.text(800, 200, 'yippee!', {fontSize: '50px', fill: '#000000'}),
+            text: myText,
         });
+
+        const editor = this.plugins.get('rexTextEdit').add(myText, {});
 
         this.updateConnectedUsersListener = (count) => {
             usersText.setText(`Connected Users: ${count}`);
@@ -118,13 +124,22 @@ class Title extends Phaser.Scene {
 
     }
 }
-const plugins = { scene: [
-    {
-        key: 'rexUI',
-        plugin: UIPlugin,
-        mapping: 'rexUI'
-    }
-]}
+const plugins = {
+    global: [
+        {
+            key: 'rexTextEdit',
+            plugin: TextEditPlugin,
+            start: true
+        },
+    ],
+    scene: [
+        {
+            key: 'rexUI',
+            plugin: UIPlugin,
+            mapping: 'rexUI'
+        }
+    ]
+}
 
 const config = {
     type: Phaser.WEBGL,
@@ -136,7 +151,13 @@ const config = {
         height: 1080,
     },
     backgroundColor: '#ffffff',
-    scene: [Loading, Disconnected, Title]
+    scene: [Loading, Disconnected, Title],
+    parent: 'bsd-game',
+    dom: { createContainer: true },
+    input: {
+        mouse: { target: 'bsd-game' },
+        touch: { target: 'bsd-game' },
+    }
 };
 
 const game = new Phaser.Game(config);
